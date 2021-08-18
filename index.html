@@ -1,12 +1,7 @@
 <html>
 
-    <meta name="author" content="ararTP">
-    <link rel="icon" type="image/png"  href="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAfUlEQVR42mNgIAPw2Zv9h2GyNBu/
-                        Pv1f+/ga0g1A1gyiSTJgCGjmUFX4D8Jk2wzSLJocCjeELGeDNMt1lYMNIcvPyAaQFWDohqCHCUHg
-                        aSb6P8NP7j/MEOQwIUpzZ7r6fw057v/IsULQEJhCkM0wzYSiF6efycmZcBvINQAAQQGelAOHQMUA
-                        AAAASUVORK5CYII="/>
+    <meta name="author" content="ararThePro">
 
-   
 
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -71,7 +66,7 @@
         <div id="clickPanel" onclick="clickPa()" oncontextmenu="event.preventDefault(); clickPa();">
             <span >click me!</span>
             
-                         <img id="zombie" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAZYAAAFECAYAAAAEDhiyAAAAAXNSR0IArs4c6QAAAARnQU1BAACx
+                         <img id="zombie" class="minecraft" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAZYAAAFECAYAAAAEDhiyAAAAAXNSR0IArs4c6QAAAARnQU1BAACx
                         jwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAhdEVYdENyZWF0aW9uIFRpbWUAMjAyMTowODox
                         MiAxNTozMjoxNtdMbpIAAD09SURBVHhe7Z1pzC3JWd/7Pfu73XvHM+Pxhs1iMMYKYHswDliGQBIy
                         CcYZIiUoEouYSCYyH7ATFMmWglCCiYKUfEARipARsZLIoISJE4TtiBgwAQbbkAnOYCA4xoMXxneu
@@ -350,7 +345,7 @@
                         LjAEVh4MgYGKgbAAAAQQZhAICAtoFxgCKw8EBFQMhAW0AwyBlQdDYKAmICwAdB0IMwgMhAW0AwS/
                         8sCGoCYgLKDZYJimPLAhqJUk+f9iHh5kUfBL+AAAAABJRU5ErkJggg==" alt="Zombie" />
                         
-                        <img id="sword"  src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAfUlEQVR42mNgIAPw2Zv9h2GyNBu/
+                        <img id="sword" class="minecraft"  src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAfUlEQVR42mNgIAPw2Zv9h2GyNBu/
                         Pv1f+/ga0g1A1gyiSTJgCGjmUFX4D8Jk2wzSLJocCjeELGeDNMt1lYMNIcvPyAaQFWDohqCHCUHg
                         aSb6P8NP7j/MEOQwIUpzZ7r6fw057v/IsULQEJhCkM0wzYSiF6efycmZcBvINQAAQQGelAOHQMUA
                         AAAASUVORK5CYII=" alt="Sword" /> 
@@ -369,6 +364,7 @@
         var sec=0;
         const dour = 0.3; 
 
+        const mineanim = (new URLSearchParams(window.location.search).get('minecraft-animation')) === "true";
         var clickPanel =  document.getElementById("clickPanel");
         var sword = document.getElementById("sword");
         
@@ -393,6 +389,7 @@
         var clicksCPS=0;
         var cpsInterval;
         const timeam = 30;
+        
         
         
         function clickPa(){
@@ -430,16 +427,16 @@
             
             clicksCPS++;
 
-            
-            if(!sword.classList.contains("hitanim")){
-                sword.classList.add("hitanim");
-                var removeAnimTime = setTimeout(function(){
-                sword.classList.remove("hitanim");
-                },dour*1000);
+            if(mineanim){
+                if(!sword.classList.contains("hitanim")){
+                    sword.classList.add("hitanim");
+                    var removeAnimTime = setTimeout(function(){
+                    sword.classList.remove("hitanim");
+                    },dour*1000);
+                }
+                
+                createHeart(clickPanel);
             }
-
-            createHeart(clickPanel);
-
 
         }
         function setLast(){
@@ -472,30 +469,37 @@
             lastGush.innerHTML = "0";
             
         }
-        
         document.addEventListener("DOMContentLoaded", function(event) {
-            clickPanel =  document.getElementById("clickPanel");
-            var offset = [0,0];
-         offset = [
-            -parseInt(getComputedStyle(sword).getPropertyValue("width")),
-            parseInt(getComputedStyle(sword).getPropertyValue("height"))/2
-        ];
-
-       
-        
-            clickPanel.addEventListener('mousemove', function(event) {
-                
-                mousePosition = {
-
-                    x : event.clientX,
-                    y : event.clientY
-
-                    };
-                    sword.style.left = (mousePosition.x - offset[0]) + 'px';
-                    sword.style.top  = (mousePosition.y - offset[1]) + 'px';
-                
+            if(mineanim){
+                var mines = document.querySelectorAll(".minecraft");
+                for (var i = 0; i < mines.length; i++) {
+                    mines.item(i).classList.remove("minecraft");
+                }
+                    
             
-        }, true);
+                clickPanel =  document.getElementById("clickPanel");
+                var offset = [0,0];
+                offset = [
+                    -parseInt(getComputedStyle(sword).getPropertyValue("width")),
+                    parseInt(getComputedStyle(sword).getPropertyValue("height"))/2
+                ];
+
+                clickPanel.style.cursor="crosshair";
+            
+                clickPanel.addEventListener('mousemove', function(event) {
+                    
+                    mousePosition = {
+
+                        x : event.clientX,
+                        y : event.clientY
+
+                        };
+                        sword.style.left = (mousePosition.x - offset[0]) + 'px';
+                        sword.style.top  = (mousePosition.y - offset[1]) + 'px';
+                    
+                
+            }, true);
+        }
         });
 
 
@@ -585,7 +589,7 @@
             border-radius: 20vh;
             background-color: aqua;
             border: 0.5vw solid Aquamarine;
-            cursor: crosshair;
+            cursor: pointer;
             text-align: center;
             display: flex;
             align-items: center;
@@ -673,6 +677,10 @@
                 transform: translate(-50%,50%) rotateZ(-80deg) rotateY(40deg) rotateX(-25deg) translate(50%,-50%);
                 
             }
+        }
+
+        .minecraft{
+            display: none;
         }
      
         

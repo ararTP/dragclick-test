@@ -55,7 +55,7 @@
         </div>
         
         <div class="con">
-         <button id="reset" onclick="reset()">RESET</button>
+         <button id="reset" onclick="reset()">RESET(r)</button>
         </div>
        
         
@@ -361,11 +361,42 @@
     
     
     <script>
+        var clickPanel =  document.getElementById("clickPanel");
+        var gushTime;
+
+        var resetCpsTime;
+        var resetCpsOnTime;
+        var resetKey;
+        var listenedKeys;
+
+        function setSettings(){
+            localStorage.setItem("gushTime",gushTime);
+            localStorage.setItem("resetCpsTime",resetCpsTime);
+            localStorage.setItem("resetCpsOnTime",resetCpsOnTime);
+            localStorage.setItem("listenedKeys",listenedKeys);
+            localStorage.setItem("resetKey",resetKey);
+        }
+        if(document.cookie==null||document.cookie==""){ 
+             gushTime=100;
+             resetKey = 'r';
+             resetCpsTime = 800;
+             resetCpsOnTime = true;
+
+             listenedKeys = ["L","R"]
+            setSettings();
+        }else{
+            gushTime=localStorage.getItem("gushTime");
+            resetCpsOnTime= localStorage.getItem("resetCpsOnTime");
+            resetCpsTime = localStorage.getItem("resetCpsTime");
+            listenedKeys = localStorage.getItem("listenedKeys");
+            resetKey = localStorage.getItem("resetKey");
+            if(!listenedKeys.contains("L"))  clickPanel.removeAttribute('oncontextmenu');
+            if(!listenedKeys.contains("R"))  clickPanel.removeAttribute('onclick');
+        }
         var sec=0;
-        const dour = 0.3; 
+        var dour = 0.3; 
 
         const mineanim = (new URLSearchParams(window.location.search).get('minecraft-animation')) === "true";
-        var clickPanel =  document.getElementById("clickPanel");
         var sword = document.getElementById("sword");
         
 
@@ -384,7 +415,7 @@
         var totalClicks =0;
         
         var clicked =false;
-        var timeout;
+        var gushTimeout;
         var bigTimeout;
         var clicksCPS=0;
         var cpsInterval;
@@ -398,17 +429,21 @@
             totalClicks++;
             total.innerHTML = totalClicks+"";
             
-            if(!clicked){
-                clicked=true;
-                timeout= setTimeout(function(){ setLast(); resetGush();},600);
-                
+            if(gushTimeout == null) gushTimeout= setTimeout(function(){ setLast(); resetGush();}, gushTime);
+            else{
+                clearTimeout(gushTimeout);
+                gushTimeout= setTimeout(function(){ setLast(); resetGush();}, gushTime);
             }
+
+            
+            
             if(bigTimeout!=null)
             clearTimeout(bigTimeout);
             
+            if(resetCpsOnTime)
             bigTimeout = setTimeout(function(){
                 resetCps();
-            },1100);
+            },resetCpsTime);
             
             
             if(clicksCPS == 0){
@@ -425,6 +460,8 @@
                 },100);
             }
             
+
+
             clicksCPS++;
 
             if(mineanim){
@@ -439,11 +476,16 @@
             }
 
         }
+
+        if(resetKey!= '') document.addEventListener("keydown",function(e){
+            if(e.key==resetKey) reset();
+        });
+
         function setLast(){
             lastGush.innerHTML = gushClicks+"";
         }
         function resetGush(){
-            
+            clearTimeout(gushTimeout);
             gushClicks=0;
             clicked = false;
             gush.innerHTML = "0";

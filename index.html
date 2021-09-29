@@ -63,7 +63,7 @@
         
         
         
-        <div id="clickPanel" onclick="clickPa()" oncontextmenu="event.preventDefault(); clickPa();">
+        <div id="clickPanel" onclick="clickHeart()" oncontextmenu="event.preventDefault();">
             <span >click me!</span>
             
                          <img id="zombie" class="minecraft" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAZYAAAFECAYAAAAEDhiyAAAAAXNSR0IArs4c6QAAAARnQU1BAACx
@@ -464,8 +464,29 @@
 
             clicksCPS++;
 
+            
+
+        }
+        clickPanel.addEventListener("mouseup", function(e) {
+            if(2==e.button) {
+                
+                sword.classList.remove("defanim");
+                
+            }
+        }, false); 
+        clickPanel.addEventListener("mousedown", function(e) {
+            if(2==e.button) {
+                
+                clickPa(); rightAnim();
+                
+            }
+        }, false);
+        function clickHeart(){
+            clickPa();
             if(mineanim){
-                if(!sword.classList.contains("hitanim")){
+                if((!sword.classList.contains("hitanim")) ){
+                    sword.classList.remove("defanim");
+
                     sword.classList.add("hitanim");
                     var removeAnimTime = setTimeout(function(){
                     sword.classList.remove("hitanim");
@@ -474,11 +495,11 @@
                 
                 createHeart(clickPanel);
             }
-
         }
 
         if(resetKey!= '') document.addEventListener("keydown",function(e){
             if(e.key==resetKey) reset();
+            else clickPa();
         });
 
         function setLast(){
@@ -511,6 +532,7 @@
             lastGush.innerHTML = "0";
             
         }
+
         document.addEventListener("DOMContentLoaded", function(event) {
             if(mineanim){
                 var mines = document.querySelectorAll(".minecraft");
@@ -543,7 +565,7 @@
             }, true);
         }
         });
-
+        
 
         function getRandomCoordsOnClickPanel(){
 
@@ -572,6 +594,17 @@
                 heart.remove();
             },500)
             father.appendChild(heart);
+        }
+
+        function rightAnim(){
+            if(mineanim){
+                if( (!sword.classList.contains("defanim"))){
+                    sword.classList.add("defanim");
+                    
+                }
+                
+            }
+
         }
         
     </script>
@@ -709,6 +742,13 @@
 
         }
 
+        .defanim{
+            animation: def infinite; 
+            animation-fill-mode: forwards;
+
+
+        }
+
 
         @keyframes hit {
 
@@ -717,6 +757,16 @@
             }
             to{
                 transform: translate(-50%,50%) rotateZ(-80deg) rotateY(40deg) rotateX(-25deg) translate(50%,-50%);
+                
+            }
+        }
+        @keyframes def {
+
+            from{
+                transform: var(--default-trans);
+            }
+            to{
+                transform: translate(-50%,50%) rotateZ(-5deg) rotateY(30deg) rotateX(-0deg) translate(50%,-50%);
                 
             }
         }
